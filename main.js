@@ -67,10 +67,13 @@ const GROUPS = [
         props: [
           { group: 'Background', fields: [
             { key: 'background-color', label: 'Background', type: 'color', default: '#ffffff' },
-            { key: 'padding', label: 'Padding', type: 'text', default: '10px' },
+            { key: 'padding', label: 'Padding', type: 'range', min: 0, max: 24, unit: 'px', default: 10 },
+            { key: 'margin', label: 'Margin', type: 'range', min: 0, max: 24, unit: 'px', default: 10 },
           ]},
           { group: 'Border', fields: [
-            { key: 'border', label: 'Border', type: 'text', default: 'none' },
+            { key: 'border-color', label: 'Color', type: 'color', default: '#bfbfbf' },
+            { key: 'border-width', label: 'Thickness', type: 'range', min: 0, max: 8, unit: 'px', default: 0 },
+            { key: 'border-style', label: 'Style', type: 'select', options: ['none', 'solid', 'dashed', 'dotted'], default: 'solid' },
             { key: 'border-radius', label: 'Border Radius', type: 'range', min: 0, max: 12, unit: 'px', default: 0 },
           ]},
         ]
@@ -100,16 +103,13 @@ const GROUPS = [
         label: 'Description Text',
         desc: 'Broadcast description text',
         icon: 'abc',
-        selector: '.boxcast-boxoffice .boxcast-description',
+        selector: '.boxcast-description > p, .boxcast-description > ul > li',
         props: [
           { group: 'Typography', fields: [
             { key: 'font-size', label: 'Font Size', type: 'range', min: 10, max: 18, unit: 'px', default: 13 },
             { key: 'color', label: 'Color', type: 'color', default: '#444444' },
             { key: 'line-height', label: 'Line Height', type: 'range', min: 1.2, max: 2.5, step: 0.05, default: 1.5 },
-          ]},
-          { group: 'Spacing', fields: [
-            { key: 'margin-top', label: 'Margin Top', type: 'range', min: 0, max: 24, unit: 'px', default: 6 },
-          ]},
+          ]}
         ]
       },
       {
@@ -121,7 +121,7 @@ const GROUPS = [
         props: [
           { group: 'Typography', fields: [
             { key: 'font-size', label: 'Font Size', type: 'range', min: 9, max: 16, unit: 'px', default: 12 },
-            { key: 'color', label: 'Color', type: 'color', default: '#888888' },
+            { key: 'color', label: 'Color', type: 'color', default: '#1a1d2e' },
             { key: 'font-style', label: 'Font Style', type: 'select', options: ['normal','italic'], default: 'normal' },
           ]},
           { group: 'Spacing', fields: [
@@ -142,8 +142,8 @@ const GROUPS = [
         selector: '.boxcast-ticket-button',
         props: [
           { group: 'Colors', fields: [
-            { key: 'background-color', label: 'Background', type: 'color', default: '#0087cc' },
-            { key: 'color', label: 'Text Color', type: 'color', default: '#ffffff' },
+            { key: 'background-color', label: 'Background', type: 'color', default: 'transparent' },
+            { key: 'color', label: 'Text Color', type: 'color', default: '#00a3bb' },
           ]},
           { group: 'Shape & Text', fields: [
             { key: 'border-radius', label: 'Border Radius', type: 'range', min: 0, max: 24, unit: 'px', default: 4 },
