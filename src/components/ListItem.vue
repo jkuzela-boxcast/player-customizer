@@ -2,12 +2,30 @@
 /// src/components/ListItem.vue
 
 import { Icon } from '@iconify/vue'
+import { useUiStore } from '../stores/ui'
+import { computed } from 'vue'
 
 const props = defineProps<{
   itemName: string
   itemDescription: string
   itemIcon: string
+  itemId?: string
+  component?: any
 }>()
+
+const store = useUiStore()
+
+// Check if this item has changes
+const showBadge = computed(() => {
+  if (props.component) {
+    // For components, check if any feature has changes
+    return store.componentHasChanges(props.component)
+  } else if (props.itemId) {
+    // For features, check the specific feature
+    return store.hasChanges(props.itemId)
+  }
+  return false
+})
 </script>
 
 <template>
@@ -26,7 +44,12 @@ const props = defineProps<{
         </p>
       </div>
     </div>
-    <span class="bg-bxblue size-2 shrink-0 -translate-x-full rounded-full"></span>
+    <span 
+      v-if="showBadge"
+      class="bg-bxblue size-2 shrink-0 rounded-full transition-all"></span>
+    <span 
+      v-else
+      class=""></span>
   </div>
 </template>
 
