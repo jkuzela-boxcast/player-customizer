@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LIVE — Code Editor</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --border: #1e1e2e;
+        --accent: #7fffb2;
+        --accent2: #ff6b6b;
+        --accent3: #6baaff;
+        --text: #e2e2f0;
+        --muted: #555570;
+        --gutter: #1a1a28;
+      }
+
+      body {
+        font-family: "Syne", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* HEADER */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        height: 52px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+        position: relative;
+      }
+
+      header::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent),
+          transparent
+        );
+        opacity: 0.4;
+      }
+
+      .logo {
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .logo span {
+        color: var(--muted);
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .pulse {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        animation: pulse 2s ease infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(0.7);
+        }
+      }
+
+      .tabs {
+        display: flex;
+        gap: 4px;
+      }
+
+      .tab {
+        padding: 4px 14px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        font-weight: 500;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.15s;
+        letter-spacing: 0.05em;
+      }
+
+      .tab:hover {
+        color: var(--text);
+        border-color: var(--border);
+      }
+
+      .tab.active {
+        color: var(--accent);
+        background: rgba(127, 255, 178, 0.06);
+        border-color: rgba(127, 255, 178, 0.2);
+      }
+
+      /* MAIN LAYOUT */
+      main {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      /* EDITOR PANEL */
+      .editor-panel {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--border);
+        position: relative;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        height: 36px;
+        background: var(--gutter);
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      .panel-label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .line-count {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .editor-wrap {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .line-numbers {
+        width: 48px;
+        flex-shrink: 0;
+        background: var(--gutter);
+        border-right: 1px solid var(--border);
+        padding: 16px 0;
+        overflow: hidden;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        line-height: 20px;
+        color: var(--muted);
+        text-align: right;
+        padding-right: 10px;
+        user-select: none;
+      }
+
+      textarea {
+        flex: 1;
+        background: var(--surface);
+        color: var(--text);
+        border: none;
+        outline: none;
+        resize: none;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        line-height: 20px;
+        padding: 16px 16px;
+        tab-size: 2;
+        white-space: pre;
+        overflow: auto;
+        caret-color: var(--accent);
+      }
+
+      textarea::selection {
+        background: rgba(127, 255, 178, 0.15);
+      }
+
+      textarea::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      textarea::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      textarea::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+
+      /* PREVIEW PANEL */
+      .preview-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .preview-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 16px;
+        height: 36px;
+        background: var(--gutter);
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+      .dot-red {
+        background: #ff5f57;
+      }
+      .dot-yellow {
+        background: #febc2e;
+      }
+      .dot-green {
+        background: #28c840;
+      }
+
+      .url-bar {
+        flex: 1;
+        height: 22px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+        gap: 6px;
+      }
+
+      .url-bar::before {
+        content: "🔒";
+        font-size: 9px;
+        opacity: 0.6;
+      }
+
+      iframe {
+        flex: 1;
+        border: none;
+        background: white;
+      }
+
+      /* RESIZE HANDLE */
+      .resize-handle {
+        width: 4px;
+        background: var(--border);
+        cursor: col-resize;
+        flex-shrink: 0;
+        transition: background 0.2s;
+        position: relative;
+      }
+
+      .resize-handle:hover,
+      .resize-handle.dragging {
+        background: var(--accent);
+      }
+
+      /* BOTTOM BAR */
+      footer {
+        height: 26px;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        gap: 20px;
+        flex-shrink: 0;
+      }
+
+      .footer-item {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .footer-item.accent {
+        color: var(--accent);
+      }
+
+      /* FLASH effect on update */
+      @keyframes flash {
+        0% {
+          border-color: rgba(127, 255, 178, 0.6);
+        }
+        100% {
+          border-color: var(--border);
+        }
+      }
+
+      .preview-panel.flash iframe {
+        animation: iflash 0.3s ease;
+      }
+
+      @keyframes iflash {
+        0% {
+          opacity: 0.7;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      /* Error overlay */
+      .error-banner {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(255, 107, 107, 0.1);
+        border-bottom: 1px solid rgba(255, 107, 107, 0.3);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11px;
+        color: var(--accent2);
+        flex-shrink: 0;
+      }
+
+      .error-banner.visible {
+        display: flex;
+      }
+
+      /* Mode switcher */
+      .mode-btn {
+        padding: 2px 10px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .mode-btn.active {
+        color: var(--accent3);
+        border-color: rgba(107, 170, 255, 0.3);
+        background: rgba(107, 170, 255, 0.06);
+      }
+      .mode-btn:hover:not(.active) {
+        color: var(--text);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">LIVE<span>.</span>EDITOR</div>
+      <div class="tabs" id="modeTabs">
+        <button class="tab active" data-mode="html">HTML</button>
+        <button class="tab" data-mode="css">CSS</button>
+        <button class="tab" data-mode="js">JS</button>
+        <button class="tab" data-mode="combined">ALL</button>
+      </div>
+      <div class="status">
+        <div class="pulse" id="pulse"></div>
+        <span id="statusText">Live</span>
+      </div>
+    </header>
+
+    <main>
+      <div class="editor-panel" id="editorPanel">
+        <div class="panel-header">
+          <span class="panel-label" id="panelLabel">HTML</span>
+          <span class="line-count" id="lineCount">1 line</span>
+        </div>
+        <div class="error-banner" id="errorBanner">
+          <span>⚠</span><span id="errorMsg">Syntax error</span>
+        </div>
+        <div class="editor-wrap">
+          <div class="line-numbers" id="lineNumbers">1</div>
+          <textarea
+            id="codeEditor"
+            spellcheck="false"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="resize-handle" id="resizeHandle"></div>
+
+      <div class="preview-panel" id="previewPanel">
+        <div class="preview-toolbar">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+          <div class="url-bar">preview — live output</div>
+          <button class="mode-btn active" id="desktopBtn" title="Desktop">
+            ▣
+          </button>
+          <button class="mode-btn" id="mobileBtn" title="Mobile">◫</button>
+        </div>
+        <iframe id="preview" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-item accent" id="cursorPos">Ln 1, Col 1</div>
+      <div class="footer-item" id="charCount">0 chars</div>
+      <div class="footer-item">UTF-8</div>
+      <div class="footer-item" id="autoSaveStatus">⚡ auto-update</div>
+    </footer>
+
+    <script>
+      const editor = document.getElementById("codeEditor");
+      const preview = document.getElementById("preview");
+      const lineNumbers = document.getElementById("lineNumbers");
+      const lineCount = document.getElementById("lineCount");
+      const cursorPos = document.getElementById("cursorPos");
+      const charCount = document.getElementById("charCount");
+      const errorBanner = document.getElementById("errorBanner");
+      const errorMsg = document.getElementById("errorMsg");
+      const statusText = document.getElementById("statusText");
+      const pulse = document.getElementById("pulse");
+      const panelLabel = document.getElementById("panelLabel");
+      const modeTabs = document.getElementById("modeTabs");
+      const editorPanel = document.getElementById("editorPanel");
+      const resizeHandle = document.getElementById("resizeHandle");
+
+      // State
+      let currentMode = "html";
+      let debounceTimer = null;
+      let updateCount = 0;
+
+      const code = {
+        html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      color: white;
+    }
+    .card {
+      text-align: center;
+      padding: 48px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+    h1 {
+      font-size: 3rem;
+      margin: 0 0 12px;
+      background: linear-gradient(90deg, #a8edea, #fed6e3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p { color: rgba(255,255,255,0.6); margin: 0 0 24px; font-size: 1.1rem; }
+    button {
+      padding: 12px 32px;
+      background: linear-gradient(135deg, #a8edea, #fed6e3);
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #1a1a2e;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(168,237,234,0.3); }
+    #counter { font-size: 5rem; font-weight: 700; margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>✦ Live Editor</h1>
+    <p>Edit the code — see it instantly</p>
+    <div id="counter">0</div>
+    <button onclick="document.getElementById('counter').textContent = +document.getElementById('counter').textContent + 1">
+      Click me!
+    </button>
+  </div>
+</body>
+</html>`,
+        css: `/* Add custom CSS here */
+/* This gets injected into the HTML preview */
+
+body {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}`,
+        js: `// Add custom JavaScript here
+// This gets injected into the HTML preview
+
+console.log('Live editor ready!');
+
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM loaded in preview');
+});`,
+        combined: "",
+      };
+
+      function buildCombined() {
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+${code.css}
+</style>
+</head>
+<body>
+${code.html}
+<script>
+${code.js}
+<\/script>
+</body>
+</html>`;
+      }
+
+      function getPreviewContent() {
+        if (currentMode === "html") return code.html;
+        if (currentMode === "combined") return code.combined || buildCombined();
+        // For CSS/JS: inject into base HTML
+        return code.html
+          .replace("</head>", `<style>${code.css}</style></head>`)
+          .replace("</body>", `<script>${code.js}<\/script></body>`);
+      }
+
+      function updatePreview() {
+        const content =
+          currentMode === "html" || currentMode === "combined"
+            ? editor.value
+            : buildCombined();
+
+        const doc = preview.contentDocument || preview.contentWindow.document;
+        doc.open();
+        doc.write(currentMode === "html" ? editor.value : content);
+        doc.close();
+
+        // Flash effect
+        preview.style.opacity = "0.85";
+        setTimeout(() => (preview.style.opacity = "1"), 100);
+
+        updateCount++;
+        statusText.textContent = `Updated ×${updateCount}`;
+        setTimeout(() => (statusText.textContent = "Live"), 1500);
+      }
+
+      function updateLineNumbers() {
+        const lines = editor.value.split("\n").length;
+        lineNumbers.innerHTML = Array.from(
+          { length: lines },
+          (_, i) => i + 1,
+        ).join("<br>");
+        const plural = lines === 1 ? "line" : "lines";
+        lineCount.textContent = `${lines} ${plural}`;
+        charCount.textContent = `${editor.value.length.toLocaleString()} chars`;
+      }
+
+      function syncScroll() {
+        lineNumbers.scrollTop = editor.scrollTop;
+      }
+
+      // Tab key support
+      editor.addEventListener("keydown", (e) => {
+        if (e.key === "Tab") {
+          e.preventDefault();
+          const start = editor.selectionStart;
+          const end = editor.selectionEnd;
+          editor.value =
+            editor.value.substring(0, start) +
+            "  " +
+            editor.value.substring(end);
+          editor.selectionStart = editor.selectionEnd = start + 2;
+          triggerUpdate();
+        }
+      });
+
+      function triggerUpdate() {
+        clearTimeout(debounceTimer);
+        pulse.style.background = "var(--accent2)";
+        debounceTimer = setTimeout(() => {
+          code[currentMode] = editor.value;
+          updatePreview();
+          updateLineNumbers();
+          pulse.style.background = "var(--accent)";
+          errorBanner.classList.remove("visible");
+        }, 180);
+      }
+
+      editor.addEventListener("input", triggerUpdate);
+
+      editor.addEventListener("scroll", syncScroll);
+
+      editor.addEventListener("keyup", () => {
+        const lines = editor.value.substr(0, editor.selectionStart).split("\n");
+        cursorPos.textContent = `Ln ${lines.length}, Col ${lines[lines.length - 1].length + 1}`;
+      });
+
+      editor.addEventListener("click", () => {
+        const lines = editor.value.substr(0, editor.selectionStart).split("\n");
+        cursorPos.textContent = `Ln ${lines.length}, Col ${lines[lines.length - 1].length + 1}`;
+      });
+
+      // Tab switching
+      modeTabs.addEventListener("click", (e) => {
+        const tab = e.target.closest("[data-mode]");
+        if (!tab) return;
+
+        // Save current
+        code[currentMode] = editor.value;
+
+        // Switch
+        currentMode = tab.dataset.mode;
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        panelLabel.textContent = tab.textContent;
+
+        if (currentMode === "combined") {
+          code.combined = buildCombined();
+          editor.value = code.combined;
+        } else {
+          editor.value = code[currentMode];
+        }
+
+        updateLineNumbers();
+        updatePreview();
+        syncScroll();
+      });
+
+      // Resize handle
+      let isResizing = false;
+      let startX, startWidth;
+
+      resizeHandle.addEventListener("mousedown", (e) => {
+        isResizing = true;
+        startX = e.clientX;
+        startWidth = editorPanel.offsetWidth;
+        resizeHandle.classList.add("dragging");
+        document.body.style.userSelect = "none";
+        document.body.style.cursor = "col-resize";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!isResizing) return;
+        const dx = e.clientX - startX;
+        const newWidth = Math.max(
+          200,
+          Math.min(window.innerWidth - 300, startWidth + dx),
+        );
+        editorPanel.style.width = newWidth + "px";
+      });
+
+      document.addEventListener("mouseup", () => {
+        if (isResizing) {
+          isResizing = false;
+          resizeHandle.classList.remove("dragging");
+          document.body.style.userSelect = "";
+          document.body.style.cursor = "";
+        }
+      });
+
+      // Desktop / Mobile view
+      document
+        .getElementById("desktopBtn")
+        .addEventListener("click", function () {
+          preview.style.maxWidth = "";
+          preview.parentElement.style.alignItems = "";
+          this.classList.add("active");
+          document.getElementById("mobileBtn").classList.remove("active");
+        });
+
+      document
+        .getElementById("mobileBtn")
+        .addEventListener("click", function () {
+          preview.style.maxWidth = "375px";
+          preview.parentElement.style.alignItems = "center";
+          this.classList.add("active");
+          document.getElementById("desktopBtn").classList.remove("active");
+        });
+
+      // Init
+      editor.value = code.html;
+      updateLineNumbers();
+      updatePreview();
+    </script>
+  </body>
+</html>
