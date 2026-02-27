@@ -301,6 +301,17 @@ const playerComponents = ref([
               max: 64,
               step: 4
             }
+          },
+          {
+            group: 'Background',
+            label: 'Color',
+            id: 'description-box-background-color',
+            cssProperty: 'background-color',
+            cssSelector: '.boxcast-with-playlist-to-right-col-1 > .boxcast-well',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.1)'
+            }
           }
         ]
       },
@@ -570,7 +581,7 @@ const playerComponents = ref([
             cssSelector: 'div.boxcast-playlist',
             input: {
               type: 'range',
-              default: 0,
+              default: 1,
               min: 0,
               max: 20,
               step: 1
@@ -590,6 +601,17 @@ const playerComponents = ref([
               step: 1
             }
           },
+          {
+            group: 'Border',
+            label: 'Clip Overflow',
+            id: 'playlist-clip-overflow',
+            cssProperty: 'overflow',
+            cssSelector: 'div.boxcast-playlist',
+            input: {
+              type: 'toggle',
+              default: false
+            }
+          }
         ]
       },
       {
@@ -608,6 +630,20 @@ const playerComponents = ref([
               type: 'color',
               default: 'hsla(0, 0, 0, 0.9)'
             }
+          },
+          {
+            group: 'Typography',
+            label: 'Size',
+            id: 'playlist-heading-size',
+            cssProperty: 'font-size',
+            cssSelector: 'div.boxcast-playlist > .boxcast-well-title > div > h3',
+            input: {
+              type: 'range',
+              default: 18,
+              min: 8,
+              max: 32,
+              step: 2,
+            }
           }
         ]
       },
@@ -615,19 +651,230 @@ const playerComponents = ref([
         label: 'Search Bar',
         id: 'playlist-search-bar',
         description: 'The search bar for filtering related videos.',
-        icon: 'fluent:search-16-filled'
+        icon: 'fluent:search-16-filled',
+        props: [
+          {
+            group: 'Spacing',
+            label: 'Horizontal Padding',
+            id: 'playlist-search-padding',
+            cssProperty: 'padding-inline',
+            cssSelector: '.boxcast-playlist-search > input',
+            input: {
+              type: 'range',
+              default: 0,
+              min: 0,
+              max: 32,
+              step: 1
+            }
+          },
+          {
+            group: 'Spacing',
+            label: 'Vertical Padding',
+            id: 'playlist-search-padding-vertical',
+            cssProperty: 'padding-block',
+            cssSelector: '.boxcast-playlist-search > input',
+            input: {
+              type: 'range',
+              default: 0,
+              min: 0,
+              max: 32,
+              step: 1
+            }
+          },
+          {
+            group: 'Spacing',
+            label: 'Width',
+            id: 'playlist-search-width',
+            cssProperty: 'width',
+            cssSelector: '.boxcast-playlist-search > input',
+            input: {
+              type: 'range',
+              default: 130,
+              min: 0,
+              max: 280,
+              step: 10
+            }
+          },
+          {
+            group: 'Spacing',
+            label: 'Height',
+            id: 'playlist-search-height',
+            cssProperty: 'height',
+            cssSelector: '.boxcast-playlist-search > input',
+            input: {
+              type: 'range',
+              default: 28,
+              min: 28,
+              max: 64,
+              step: 4
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Background',
+            id: 'playlist-search-bg-color',
+            cssProperty: 'background-color',
+            cssSelector: '.boxcast-playlist-search > input',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Text',
+            id: 'playlist-search-text-color',
+            cssProperty: 'color',
+            cssSelector: '.boxcast-playlist-search > input',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Placeholder',
+            id: 'playlist-search-placeholder-color',
+            cssProperty: 'color',
+            cssSelector: '.boxcast-playlist-search > input::placeholder',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.25)'
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Border',
+            id: 'playlist-search-border-color',
+            cssProperty: 'border-color',
+            cssSelector: '.boxcast-playlist-search > input',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.25)'
+            }
+          },
+          {
+            group: 'Border',
+            label: 'Thickness',
+            id: 'playlist-search-border-width',
+            cssProperty: 'border-width',
+            cssSelector: '.boxcast-playlist-search > input',
+            input: {
+              type: 'range',
+              default: 1,
+              min: 0,
+              max: 8,
+              step: 1
+            }
+          },
+          {
+            group: 'Typography',
+            label: 'Font Size',
+            id: 'playlist-search-text-size',
+            cssProperty: 'font-size',
+            cssSelector: '.boxcast-playlist-search > input',
+            input: {
+              type: 'range',
+              default: 16,
+              min: 8,
+              max: 32,
+              step: 1
+            }
+          }
+        ]
       },
       {
         label: 'Playlist Items',
         id: 'playlist-items',
         description: 'The list of related videos.',
-        icon: 'fluent:list-16-filled'
+        icon: 'fluent:list-16-filled',
+        props: [
+          {
+            group: 'Color',
+            label: 'Broadcast Title',
+            id: 'playlist-item-title-color',
+            cssProperty: 'color',
+            cssSelector: '.boxcast-playlist-item-meta > h3',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.9)'
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Broadcast Description',
+            id: 'playlist-item-description-color',
+            cssProperty: 'color',
+            cssSelector: '.boxcast-playlist-item-meta > p:nth-child(2)',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.9)'
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Broadcast Date-Time',
+            id: 'playlist-item-datetime-color',
+            cssProperty: 'color',
+            cssSelector: '.boxcast-playlist-item-meta > p:nth-child(3)',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.9)'
+            }
+          }
+        ]
       },
       {
         label: 'Pagination Controls',
         id: 'playlist-pagination-controls',
         description: 'The pagination controls for the playlist.',
-        icon: 'fluent:arrow-next-12-filled'
+        icon: 'fluent:arrow-next-12-filled',
+        props: [
+          {
+            group: 'Color',
+            label: 'Background',
+            id: 'playlist-pagination-bg-color',
+            cssProperty: 'background-color',
+            cssSelector: '.boxcast-page-controls',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Label',
+            id: 'playlist-pagination-label-color',
+            cssProperty: 'color',
+            cssSelector: '.boxcast-page-controls > span',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Button Background',
+            id: 'playlist-pagination-button-bg-color',
+            cssProperty: 'background-color',
+            cssSelector: '.boxcast-page-controls > a',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Button Text',
+            id: 'playlist-pagination-button-text-color',
+            cssProperty: 'color',
+            cssSelector: '.boxcast-page-controls > a',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          },
+        ]
       },
     ],
   },
@@ -641,10 +888,138 @@ const playerComponents = ref([
         label: 'Container',
         id: 'chat-container',
         description: 'The container for the viewer chat.',
-        icon: 'fluent:frame-16-regular'
+        icon: 'fluent:frame-16-regular',
+        props: [
+          {
+            group: 'Border',
+            label: 'Color',
+            id: 'chat-border-color',
+            cssProperty: 'border-color',
+            cssSelector: '.boxcast-chat--shell',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          },
+          {
+            group: 'Border',
+            label: 'Radius',
+            id: 'chat-border-radius',
+            cssProperty: 'border-radius',
+            cssSelector: '.boxcast-chat--shell',
+            input: {
+              type: 'range',
+              default: 0,
+              min: 0,
+              max: 16,
+              step: 1
+            }
+          },
+          {
+            group: 'Border',
+            label: 'Thickness',
+            id: 'chat-border-width',
+            cssProperty: 'border-width',
+            cssSelector: '.boxcast-chat--shell',
+            input: {
+              type: 'range',
+              default: 1,
+              min: 0,
+              max: 16,
+              step: 1
+            }
+          },
+          {
+            group: 'Background',
+            label: 'Color',
+            id: 'chat-background-color',
+            cssProperty: 'background-color',
+            cssSelector: '.boxcast-chat--shell, .boxcast-chat--msgcontainer',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          }
+        ]
       },
       {
-
+        label: 'Header',
+        id: 'chat-header',
+        description: 'The header for the viewer chat.',
+        icon: 'fluent:text-16-filled',
+        props: [
+          {
+            group: 'Layout',
+            label: 'Flex Alignment',
+            id: 'chat-header-alignment',
+            cssProperty: 'align-items',
+            cssSelector: '.boxcast-chat--shell > .boxcast-well-title',
+            input: {
+              type: 'select',
+              default: 'start',
+              options: [
+                { label: 'Start', value: 'start' },
+                { label: 'Center', value: 'center' },
+                { label: 'End', value: 'end' },
+              ]
+            }
+          },
+          {
+            group: 'Typography',
+            label: 'Color',
+            id: 'chat-header-color',
+            cssProperty: 'color',
+            cssSelector: '.boxcast-chat--shell > .boxcast-well-title > h3',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.9)'
+            }
+          },
+          {
+            group: 'Typography',
+            label: 'Size',
+            id: 'chat-header-size',
+            cssProperty: 'font-size',
+            cssSelector: '.boxcast-chat--shell > .boxcast-well-title > h3',
+            input: {
+              type: 'range',
+              default: 18,
+              min: 8,
+              max: 32,
+              step: 2,
+            }
+          }
+        ]
+      },
+      {
+        label: 'Messages',
+        id: 'chat-messages',
+        description: 'The viewer chat messages.',
+        icon: 'fluent:chat-16-filled',
+        props: [
+          {
+            group: 'Color',
+            label: 'Bubble',
+            id: 'chat-message-bubble-color',
+            cssProperty: 'background-color',
+            cssSelector: '.boxcast-chat--msgcontainer .boxcast-chat--msg',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          },
+          {
+            group: 'Color',
+            label: 'Message Text',
+            id: 'chat-message-text-color',
+            cssProperty: 'color',
+            cssSelector: '.boxcast-chat--msg:not(strong)',
+            input: {
+              type: 'color',
+              default: 'hsla(0, 0, 0, 0.5)'
+            }
+          }
+        ]
       }
     ]
   },
@@ -674,16 +1049,30 @@ const playerComponents = ref([
 const { generateCss } = useCssGenerator(playerComponents.value)
 
 function handleComponentClick(comp: any) {
+  if(store.selectedComponent.id === comp.id) {
+    store.selectedComponent = {}
+    store.selectedFeature = {}
+    return
+  }
   store.selectedComponent = comp
+  store.selectedFeature = {}
 }
 
 function handleFeatureClick(feature: any) {
+  if(store.selectedFeature.id === feature.id) {
+    store.selectedFeature = {}
+    return
+  }
   store.selectedFeature = feature
 }
 
 function handleResetFeature(featureId: string) {
   store.resetFeature(featureId)
   generateCss()
+}
+
+function togglePreviewTheme() {
+  store.togglePreviewTheme()
 }
 
 function handleResetAll() {
@@ -704,9 +1093,23 @@ function handleDownloadCss() {
   element.click()
   document.body.removeChild(element)
 }
+
+function dismissDisclaimer() {
+  const disclaimer = document.getElementById('support-disclaimer')
+  if (disclaimer) {
+    disclaimer.style.display = 'none'
+  }
+}
 </script>
 
 <template>
+  <!-- 2-column layout discalimer -->
+  <div id="support-disclaimer" class="text-slate-50 absolute left-1/4 top-2 right-1/4 bg-cyan-600 shadow-md shadow-cyan-800 rounded-md p-3 flex justify-between">
+    <p class="text-center"><span class="font-bold">NOTE:</span> Only the 2-Column player layout is supported at this time.</p>
+    <button @click="dismissDisclaimer" class="cursor-pointer hover:bg-cyan-800 p-1 rounded-lg">
+      <Icon icon="fluent:dismiss-12-filled"/>
+    </button>
+  </div>
   <div class="flex h-screen flex-col">
     <header class="flex items-center justify-between border-b border-slate-700 bg-slate-900 px-4 py-2 text-slate-50">
       <div class="flex items-center gap-2">
@@ -717,7 +1120,13 @@ function handleDownloadCss() {
         <span>|</span>
         <h2>CSS Generator</h2>
       </div>
-      <div>
+      <div class="flex items-center gap-2">
+        <button
+          @click="togglePreviewTheme"
+          class="flex cursor-pointer items-center gap-2 rounded-md border border-cyan-700 bg-cyan-900 px-2 py-1 text-cyan-300 transition-all hover:border-cyan-400 hover:bg-cyan-800 hover:text-cyan-100">
+          <Icon icon="fluent:dark-theme-20-filled" />
+          Preview Background
+        </button>
         <button
           @click="handleResetAll"
           class="flex cursor-pointer items-center gap-2 rounded-md border border-red-700 bg-red-900 px-2 py-1 text-red-300 transition-all hover:border-red-400 hover:bg-red-800 hover:text-red-100">
@@ -746,6 +1155,7 @@ function handleDownloadCss() {
               :item-description="component.description"
               :item-icon="component.icon"
               :component="component"
+              :is-selected="component.id === store.selectedComponent.id"
               @click="handleComponentClick(component)" />
           </div>
         </section>
@@ -782,13 +1192,14 @@ function handleDownloadCss() {
               :item-icon="feature.icon || 'fluent:star-16-filled'"
               :item-description="feature.description"
               :item-id="feature.id"
+              :is-selected="feature.id === store.selectedFeature.id"
               @click="handleFeatureClick(feature)"/>
           </div>
         </section>
       </aside>
 
       <!-- player preview -->
-      <div class="flex items-center justify-center p-4 text-black">
+      <div class="flex gap-8 items-center justify-center p-4 text-black" :class="store.previewThemeDark ? 'bg-slate-950' : 'bg-slate-100'">
         <BoxcastPlayer class="flex-1" />
       </div>
 
@@ -848,10 +1259,165 @@ function handleDownloadCss() {
             </div>
           </div>
           <div class="flex h-full p-2">
-            <pre class="flex-1 w-full overflow-auto rounded-md bg-slate-900 p-2 text-xs text-slate-300 break-words whitespace-pre">{{ truncatedCss }}</pre>
+            <pre class="flex-1 w-full overflow-auto rounded-md bg-slate-900 p-2 text-xs text-slate-300 max-h-32">{{ truncatedCss }}</pre>
           </div>
         </section>
       </aside>
     </main>
   </div>
 </template>
+
+<style>
+/* ============================================================
+   MODERN THIN SCROLLBARS — Vue 3 App
+   Covers: WebKit (Chrome, Safari, Edge), Firefox, and future
+   standard properties. Drop into your App.vue <style> or a
+   global CSS file imported in main.js / main.ts
+   ============================================================ */
+
+/* ──────────────────────────────────────────────────────────────
+   1. FIREFOX  (standards-based)
+   ────────────────────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;                  /* "auto" | "thin" | "none" */
+  scrollbar-color: #888 transparent;      /* thumb  track */
+}
+
+/* ──────────────────────────────────────────────────────────────
+   2. WEBKIT / BLINK  (Chrome, Edge, Safari, Opera)
+   ────────────────────────────────────────────────────────────── */
+
+/* 2a. Overall scrollbar size */
+::-webkit-scrollbar {
+  width: 6px;           /* vertical scrollbar width   */
+  height: 6px;          /* horizontal scrollbar height */
+}
+
+/* 2b. The track (the groove the thumb slides in) */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 999px;
+}
+
+/* 2c. The draggable thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 999px;
+  border: 2px solid transparent;         /* creates padding around thumb */
+  background-clip: content-box;          /* keeps colour inside the border */
+  transition: background-color 0.2s ease;
+}
+
+/* 2d. Thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* 2e. Thumb while being dragged */
+::-webkit-scrollbar-thumb:active {
+  background-color: #333;
+}
+
+/* 2f. The corner where vertical + horizontal scrollbars meet */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* 2g. The increment / decrement buttons (arrows) — hide them */
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   3. DARK MODE  — auto-switches via prefers-color-scheme
+   ────────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  * {
+    scrollbar-color: #555 transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #555;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #888;
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background-color: #aaa;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   4. HIDE scrollbars entirely on specific elements
+      (content still scrollable — great for carousels / sidebars)
+   ────────────────────────────────────────────────────────────── */
+.scrollbar-hidden {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge legacy */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;                /* WebKit */
+}
+
+/* ──────────────────────────────────────────────────────────────
+   5. OVERLAY scrollbars — only appear on hover
+      Apply class="scrollbar-overlay" to any scrollable container
+   ────────────────────────────────────────────────────────────── */
+.scrollbar-overlay {
+  overflow: auto;
+}
+
+.scrollbar-overlay::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.scrollbar-overlay:hover::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   6. ACCENT-COLOURED scrollbars
+      Use a CSS variable so Vue components can override the colour
+      e.g. <div class="scrollbar-accent" style="--sb-color: #6366f1">
+   ────────────────────────────────────────────────────────────── */
+.scrollbar-accent {
+  --sb-color: #6366f1;          /* default: indigo — override per element */
+  scrollbar-color: var(--sb-color) transparent;
+}
+
+.scrollbar-accent::-webkit-scrollbar-thumb {
+  background-color: var(--sb-color);
+}
+
+.scrollbar-accent::-webkit-scrollbar-thumb:hover {
+  filter: brightness(1.2);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   7. EXTRA THIN variant (4 px) for dense UI panels
+   ────────────────────────────────────────────────────────────── */
+.scrollbar-xs::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   8. SMOOTH SCROLLING — good companion rule
+   ────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   9. MOMENTUM SCROLLING for iOS / touch (Safari on iPhone/iPad)
+   ────────────────────────────────────────────────────────────── */
+.scroll-touch {
+  -webkit-overflow-scrolling: touch;
+}
+</style>

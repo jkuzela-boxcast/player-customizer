@@ -13,6 +13,7 @@ interface FeatureChanges {
 export const useUiStore = defineStore('ui', () => {
   const selectedComponent = ref({} as any)
   const selectedFeature = ref({} as any)
+  const previewThemeDark = ref(true);
   
   // Track changes: featureId -> { propId -> { value, changed } }
   const propertyChanges = ref<{ [featureId: string]: FeatureChanges }>({})
@@ -21,6 +22,10 @@ export const useUiStore = defineStore('ui', () => {
   const aspectRatioLocks = ref<{ [featureId: string]: { [propId: string]: boolean } }>({})
   
   const cssOutput = ref<string>('')
+
+  const togglePreviewTheme = () => {
+    previewThemeDark.value = !previewThemeDark.value
+  }
 
   // Get all props that have been changed for a feature
   const getChangedPropsForFeature = (featureId: string) => {
@@ -95,6 +100,8 @@ export const useUiStore = defineStore('ui', () => {
     propertyChanges,
     cssOutput,
     aspectRatioLocks,
+    previewThemeDark,
+    togglePreviewTheme,
     getChangedPropsForFeature,
     hasChanges,
     componentHasChanges,
