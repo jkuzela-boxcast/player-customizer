@@ -1,92 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BoxCast Video Player Customizer</title>
-    <link rel="stylesheet" href="reset.css" />
+    <title>Vite App</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
-    <header class="primary-header">
-      <div class="primary-header_brand-group">
-        <h1>Video Player Customizer</h1>
-        <span class="v-div"></span>
-        <p>Player CSS Generator</p>
-      </div>
-      <button id="button-reset-all" class="button-danger">Reset All</button>
-    </header>
-    <main class="main-grid">
-      <aside class="sidebar-base sidebar-left">
-        <section>
-          <h3 class="sidebar-section-header">Player Components</h3>
-          <div class="option-list-container" id="list-player-components"></div>
-        </section>
-        <div
-          class="resize-handle handle-horizontal"
-          id="handle-component-section"
-        ></div>
-        <section>
-          <h3 class="sidebar-section-header">Feature Options</h3>
-          <div class="option-list-container" id="list-component-features"></div>
-        </section>
-      </aside>
-      <div class="resize-handle handle-vertical" id="handle-left-sidebar"></div>
-      <div>
-        <style id="player-preview-css"></style>
-        <div id="boxcast-widget-sb1fihbcionbdcymi7tp"></div>
-        <script type="text/javascript" charset="utf-8">
-          (function (d, s, c, o) {
-            var js = d.createElement(s),
-              fjs = d.getElementsByTagName(s)[0];
-            js.src = "//js.boxcast.com/v3.min.js";
-            js.onload = function () {
-              boxcast
-                .noConflict()("#boxcast-widget-" + c)
-                .loadChannel(c, o);
-            };
-            js.charset = "utf-8";
-            fjs.parentNode.insertBefore(js, fjs);
-          })(document, "script", "sb1fihbcionbdcymi7tp", {
-            showTitle: 1,
-            showDescription: true,
-            showHighlights: true,
-            showRelated: true,
-            defaultVideo: "next",
-            playInline: false,
-            dvr: true,
-            market: "internal",
-            showCountdown: true,
-            showDonations: true,
-            showDocuments: true,
-            showIndex: true,
-            showChat: true,
-            hidePreBroadcastTextOverlay: false,
-            layout: "playlist-to-right",
-          });
-        </script>
-      </div>
-      <div
-        class="resize-handle handle-vertical"
-        id="handle-right-sidebar"
-      ></div>
-      <aside class="sidebar-base sidebar-right">
-        <section>
-          <h3 class="sidebar-section-header">Properties</h3>
-          <div class="option-list-container" id="list-feature-properties"></div>
-        </section>
-        <div
-          class="resize-handle handle-horizontal"
-          id="handle-property-section"
-        ></div>
-        <section>
-          <h3 class="sidebar-section-header">CSS Output</h3>
-          <div class="css-output-container" id="css-output">
-            <pre id="css-output-pre"></pre>
-          </div>
-        </section>
-      </aside>
-    </main>
-    <script type="module" src="app.js"></script>
+  <body class="bg-slate-50 dark:bg-slate-950">
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
