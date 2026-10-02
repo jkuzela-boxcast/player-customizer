@@ -7,18 +7,16 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
-const handleChange = (e: Event) => {
-  const target = e.target as HTMLInputElement
-  emit('update:modelValue', target.value)
-}
+const onInput = (e: Event) => emit('update:modelValue', (e.target as HTMLInputElement).value)
 </script>
 
 <template>
-  <input
-    :value="modelValue"
-    type="color"
-    class="h-10 w-full cursor-pointer rounded-md border border-slate-600 bg-slate-900"
-    @change="handleChange" />
+  <label class="input input-sm w-full cursor-pointer">
+    <input
+      :value="modelValue"
+      type="color"
+      class="size-5 shrink-0 cursor-pointer rounded border-0 bg-transparent p-0"
+      @input="onInput" />
+    <span class="font-mono text-xs">{{ modelValue }}</span>
+  </label>
 </template>
-
-<style scoped></style>

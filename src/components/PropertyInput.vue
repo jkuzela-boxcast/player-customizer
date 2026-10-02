@@ -1,162 +1,109 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useUiStore } from '../stores/ui'
+import { Icon } from '@iconify/vue'
+import { useUiStore, type PropValue } from '../stores/ui'
+import type { StyleProp } from '../config/features'
 import ColorInput from './inputs/ColorInput.vue'
+import RadiusInput from './inputs/RadiusInput.vue'
 import RangeInput from './inputs/RangeInput.vue'
 import SelectInput from './inputs/SelectInput.vue'
 import ToggleInput from './inputs/ToggleInput.vue'
 
 const props = defineProps<{
-  prop: any
-  featureId: string
-  allProps?: any[]
+  prop: StyleProp
+  subfeatureId: string
+  allProps: StyleProp[]
 }>()
 
 const store = useUiStore()
 
-const currentValue = computed(() => {
-  return store.getPropertyValue(props.featureId, props.prop.id, props.prop.input.default)
-})
+const valueOf = (p: StyleProp) => store.getPropertyValue(props.subfeatureId, p.id, p.input.default)
 
-// Find companion width/height property - must have same prefix
+const currentValue = computed(() => valueOf(props.prop))
+const isChanged = computed(() => store.propertyChanges[props.subfeatureId]?.[props.prop.id] !== undefined)
+
+// Width/height props with the same id prefix can be locked together,
+// e.g. "player-play-button-width" <-> "player-play-button-height"
 const companionProp = computed(() => {
-  if (!props.allProps) return null
-  
-  const propId = props.prop.id.toLowerCase()
-  const isWidthProp = propId.includes('width')
-  const isHeightProp = propId.includes('height')
-  
-  if (!isWidthProp && !isHeightProp) return null
-  
-  // Extract the prefix (everything before the dimension keyword)
-  // E.g., "play-button-icon-width" → "play-button-icon-"
-  //       "play-button-width" → "play-button-"
-  let prefix = ''
-  if (isWidthProp) {
-    prefix = propId.substring(0, propId.lastIndexOf('width'))
-  } else {
-    prefix = propId.substring(0, propId.lastIndexOf('height'))
-  }
-  
-  // Look for the complementary dimension with the same prefix
-  const searchFor = isWidthProp ? 'height' : 'width'
-  const expectedCompanionId = prefix + searchFor
-  
-  return props.allProps.find((p: any) => p.id.toLowerCase() === expectedCompanionId)
+  const id = props.prop.id
+  if (props.prop.input.type !== 'range') return null
+  if (id.endsWith('-width')) return props.allProps.find((p) => p.id === id.replace(/-width$/, '-height')) ?? null
+  if (id.endsWith('-height')) return props.allProps.find((p) => p.id === id.replace(/-height$/, '-width')) ?? null
+  return null
 })
 
-const hasAspectRatioLock = computed(() => {
-  return companionProp.value !== null
-})
+const isLocked = computed(() => !!companionProp.value && store.isAspectRatioLocked(props.subfeatureId, props.prop.id))
 
-const isAspectRatioLocked = computed(() => {
-  if (!companionProp.value) return false
-  return store.isAspectRatioLocked(props.featureId, props.prop.id)
-})
+// companion / this, captured when the lock is turned on
+const aspectRatio = ref(1)
 
-// Store the initial aspect ratio when lock is enabled
-const initialAspectRatio = ref<number | null>(null)
+const handleChange = (value: PropValue) => {
+  store.updateProperty(props.subfeatureId, props.prop.id, value)
 
-const handleChange = (value: any) => {
-  // Only convert to number for range inputs
-  const finalValue = props.prop.input.type === 'range' ? Number(value) : value
-  store.updateProperty(props.featureId, props.prop.id, finalValue)
-  
-  // Handle aspect ratio locking (only applies to range inputs)
-  if (props.prop.input.type === 'range' && isAspectRatioLocked.value && companionProp.value) {
-    // Initialize aspect ratio on first change if not set
-    if (initialAspectRatio.value === null) {
-      const currentCompanionValue = store.getPropertyValue(
-        props.featureId,
-        companionProp.value.id,
-        companionProp.value.input.default
-      )
-      initialAspectRatio.value = currentCompanionValue / (store.getPropertyValue(
-        props.featureId,
-        props.prop.id,
-        props.prop.input.default
-      ) || props.prop.input.default)
-    }
-    
-    // Update companion value based on aspect ratio
-    const newCompanionValue = Math.round(finalValue * (initialAspectRatio.value || 1))
-    store.updateProperty(props.featureId, companionProp.value.id, newCompanionValue)
+  if (isLocked.value && companionProp.value && typeof value === 'number') {
+    store.updateProperty(props.subfeatureId, companionProp.value.id, Math.round(value * aspectRatio.value))
   }
 }
 
-const toggleAspectRatioLock = () => {
-  const willLock = !isAspectRatioLocked.value
-  
-  // Reset aspect ratio cache when toggling
-  if (willLock) {
-    initializeAspectRatio()
-  } else {
-    initialAspectRatio.value = null
+const toggleLock = () => {
+  const companion = companionProp.value
+  if (!companion) return
+  if (!isLocked.value) {
+    aspectRatio.value = Number(valueOf(companion)) / (Number(currentValue.value) || 1)
   }
-  
-  store.toggleAspectRatioLock(props.featureId, props.prop.id)
-  if (companionProp.value) {
-    store.toggleAspectRatioLock(props.featureId, companionProp.value.id)
-  }
-}
-
-const initializeAspectRatio = () => {
-  if (companionProp.value) {
-    const currentValue = store.getPropertyValue(props.featureId, props.prop.id, props.prop.input.default)
-    const companionValue = store.getPropertyValue(
-      props.featureId,
-      companionProp.value.id,
-      companionProp.value.input.default
-    )
-    initialAspectRatio.value = companionValue / (currentValue || 1)
-  }
+  store.toggleAspectRatioLock(props.subfeatureId, props.prop.id)
+  store.toggleAspectRatioLock(props.subfeatureId, companion.id)
 }
 </script>
 
 <template>
-  <div class="flex flex-col gap-1">
+  <div class="flex flex-col gap-1.5">
     <div class="flex items-center justify-between">
-      <label class="text-xs font-medium text-slate-300">{{ prop.label }}</label>
+      <label class="label text-base-content text-xs font-medium">
+        {{ prop.label }}
+        <span
+          v-if="isChanged"
+          class="status status-primary status-xs"
+          title="Changed" />
+      </label>
       <button
-        v-if="hasAspectRatioLock"
-        @click="toggleAspectRatioLock"
-        :title="isAspectRatioLocked ? 'Aspect ratio locked' : 'Aspect ratio unlocked'"
-        class="rounded border border-slate-600 px-1.5 py-0.5 text-xs transition-all"
-        :class="isAspectRatioLocked 
-          ? 'border-bxblue bg-bxblue/10 text-bxblue' 
-          : 'border-slate-600 text-slate-400 hover:border-slate-500'">
-        🔒
+        v-if="companionProp"
+        class="btn btn-ghost btn-xs btn-square"
+        :class="{ 'btn-active text-primary': isLocked }"
+        :title="isLocked ? 'Aspect ratio locked' : 'Lock aspect ratio'"
+        @click="toggleLock">
+        <Icon :icon="isLocked ? 'fluent:lock-closed-16-regular' : 'fluent:lock-open-16-regular'" />
       </button>
     </div>
-    
-    <!-- Color Input -->
+
     <ColorInput
       v-if="prop.input.type === 'color'"
-      :model-value="currentValue"
+      :model-value="String(currentValue)"
       @update:model-value="handleChange" />
-    
-    <!-- Range Input -->
+
     <RangeInput
       v-else-if="prop.input.type === 'range'"
-      :model-value="currentValue"
+      :model-value="Number(currentValue)"
       :min="prop.input.min"
       :max="prop.input.max"
       :step="prop.input.step"
       @update:model-value="handleChange" />
-    
-    <!-- Select Input -->
+
+    <RadiusInput
+      v-else-if="prop.input.type === 'radius'"
+      :model-value="currentValue as number | number[]"
+      :max="prop.input.max"
+      @update:model-value="handleChange" />
+
     <SelectInput
       v-else-if="prop.input.type === 'select'"
-      :model-value="currentValue"
+      :model-value="currentValue as string | number"
       :options="prop.input.options"
       @update:model-value="handleChange" />
-    
-    <!-- Toggle Input -->
+
     <ToggleInput
       v-else-if="prop.input.type === 'toggle'"
-      :model-value="currentValue"
+      :model-value="Boolean(currentValue)"
       @update:model-value="handleChange" />
   </div>
 </template>
-
-<style scoped></style>

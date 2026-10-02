@@ -1,28 +1,26 @@
 <script setup lang="ts">
 defineProps<{
   modelValue: string | number
-  options: Array<{label: string, value: string | number}>
+  options: { label: string; value: string | number }[]
 }>()
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
+  'update:modelValue': [value: string]
 }>()
 
-const handleChange = (e: Event) => {
-  const target = e.target as HTMLSelectElement
-  emit('update:modelValue', target.value)
-}
+const onChange = (e: Event) => emit('update:modelValue', (e.target as HTMLSelectElement).value)
 </script>
 
 <template>
   <select
     :value="modelValue"
-    class="rounded-md border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-slate-300"
-    @change="handleChange">
-    <option v-for="option in options" :key="option.value" :value="option.value">
+    class="select select-sm w-full"
+    @change="onChange">
+    <option
+      v-for="option in options"
+      :key="option.value"
+      :value="option.value">
       {{ option.label }}
     </option>
   </select>
 </template>
-
-<style scoped></style>

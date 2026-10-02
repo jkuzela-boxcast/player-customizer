@@ -1,0 +1,838 @@
+/*
+ * BoxCast Player add-on: UI Overhaul (styles)
+ *
+ * Embedded into ui-overhaul.js by the customizer, so sites only include the script.
+ * Everything is scoped to `.boxcast-boxoffice.bxo`; the script adds `bxo` to each player root.
+ * `!important` is used where the player sets inline styles or more specific rules of its own.
+ *
+ * Colors and sizing are CSS variables, so a site can still adjust the theme, e.g.
+ *   .boxcast-boxoffice.bxo { --bxo-accent: #7c3aed; }
+ */
+
+/* ---------- Theme ---------- */
+
+.boxcast-boxoffice.bxo {
+  --bxo-accent: #00a3bb;
+  --bxo-on-accent: #ffffff;
+  --bxo-live: #e5252a;
+  --bxo-text: #0f0f0f;
+  --bxo-muted: #606060;
+  --bxo-surface: #f2f2f2;
+  --bxo-panel: #ffffff;
+  --bxo-border: #e5e5e5;
+  --bxo-hover: rgba(0, 0, 0, 0.05);
+  --bxo-radius: 12px;
+  --bxo-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  font-family: var(--bxo-font) !important;
+  color: var(--bxo-text);
+  line-height: 1.4;
+}
+
+.boxcast-boxoffice.bxo.boxcast-theme-dark {
+  --bxo-text: #f1f1f1;
+  --bxo-muted: #aaaaaa;
+  --bxo-surface: #272727;
+  --bxo-panel: #181818;
+  --bxo-border: #333333;
+  --bxo-hover: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Layout ---------- */
+
+/* md/lg: video + details on the left, sidebar card on the right (the player only uses flex at these sizes) */
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right {
+  gap: 16px;
+}
+
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 {
+  min-width: 0;
+  padding: 0 !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-2 {
+  box-sizing: border-box;
+  display: flex !important;
+  flex-direction: column;
+  margin: 0 !important;
+  overflow: hidden;
+  border: 1px solid var(--bxo-border);
+  border-radius: var(--bxo-radius);
+  background: var(--bxo-panel);
+}
+
+.boxcast-boxoffice.bxo.boxcast-size-lg .boxcast-with-playlist-to-right-col-2 {
+  flex: 0 0 400px;
+  width: 400px !important;
+}
+
+.boxcast-boxoffice.bxo.boxcast-size-md .boxcast-with-playlist-to-right-col-2 {
+  flex: 0 0 300px;
+  width: 300px !important;
+}
+
+/* `contain: size` keeps the sidebar's content from setting the row height,
+   so it stretches to match the video + details column instead */
+.boxcast-boxoffice.bxo:is(.boxcast-size-md, .boxcast-size-lg) .boxcast-with-playlist-to-right-col-2 {
+  contain: size;
+}
+
+/* xs/sm: everything stacks; the sidebar gets a fixed height so its panels scroll */
+.boxcast-boxoffice.bxo:is(.boxcast-size-xs, .boxcast-size-sm) .boxcast-with-playlist-to-right-col-2 {
+  height: 520px;
+  margin-top: 16px !important;
+}
+
+/* ---------- Video ---------- */
+
+.boxcast-boxoffice.bxo .boxcast-player-container {
+  overflow: hidden;
+  border-radius: var(--bxo-radius);
+  background: #000;
+}
+
+.boxcast-boxoffice.bxo #boxcast-big-play-button {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 72px !important;
+  height: 72px !important;
+  margin: auto !important;
+  border: 0;
+  border-radius: 50% !important;
+  background: rgba(15, 15, 15, 0.6) !important;
+  backdrop-filter: blur(6px);
+  opacity: 1 !important;
+  transition:
+    background-color 0.15s,
+    transform 0.15s;
+}
+
+.boxcast-boxoffice.bxo #boxcast-big-play-button:hover {
+  background: var(--bxo-accent) !important;
+  transform: scale(1.06);
+}
+
+.boxcast-boxoffice.bxo #boxcast-big-play-button svg {
+  width: 30px !important;
+  height: 30px !important;
+  margin-left: 4px; /* optical centering of the triangle */
+}
+
+.boxcast-boxoffice.bxo .media-control-background {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6)) !important;
+}
+
+.boxcast-boxoffice.bxo .media-control .bar-background {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.boxcast-boxoffice.bxo .media-control .bar-fill-1 {
+  background-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* The player sets the progress color inline */
+.boxcast-boxoffice.bxo .media-control .bar-fill-2 {
+  background-color: var(--bxo-accent) !important;
+}
+
+.boxcast-boxoffice.bxo .media-control .bar-scrubber-icon {
+  background-color: var(--bxo-accent) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ---------- Details (title, date, actions, description) ---------- */
+
+/* A wrapping flex row; `order` sets the visual order:
+   title / date + badge ... actions / description card / everything else / BoxCast link */
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 12px 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  color: var(--bxo-text);
+}
+
+/* Spacer that pushes the action buttons to the right of the date row */
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well::before {
+  content: '';
+  order: 4;
+  flex: 1 1 0;
+}
+
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > * {
+  order: 20;
+  flex-basis: 100%;
+  margin: 0 !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > span:empty {
+  display: none;
+}
+
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > .boxcast-title {
+  order: 1;
+  color: var(--bxo-text) !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > .boxcast-start-stop {
+  order: 2;
+  display: flex;
+  flex-basis: auto;
+  align-items: center;
+  gap: 8px;
+  color: var(--bxo-muted) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1.4;
+}
+
+/* LIVE / UPCOMING chip; the script sets data-bxo-status */
+.boxcast-boxoffice.bxo .boxcast-start-stop[data-bxo-status]::before {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 14px;
+}
+
+.boxcast-boxoffice.bxo .boxcast-start-stop[data-bxo-status='live']::before {
+  content: 'LIVE';
+  background: var(--bxo-live);
+  color: #fff;
+}
+
+.boxcast-boxoffice.bxo .boxcast-start-stop[data-bxo-status='upcoming']::before {
+  content: 'UPCOMING';
+  background: var(--bxo-surface);
+  color: var(--bxo-text);
+}
+
+/* Resolution badge */
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > aside {
+  order: 3;
+  flex-basis: auto;
+}
+
+.boxcast-boxoffice.bxo .boxcast-well > aside dl {
+  display: flex;
+  margin: 0;
+}
+
+.boxcast-boxoffice.bxo .boxcast-well > aside dd {
+  margin: 0 !important;
+  padding: 1px 6px !important;
+  border: 1px solid var(--bxo-border);
+  border-radius: 4px !important;
+  background: none !important;
+  color: var(--bxo-muted) !important;
+  font-size: 11px !important;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+/* Ticket / donate buttons */
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > .boxcast-ticket {
+  order: 5;
+  display: flex;
+  flex-basis: auto;
+  align-items: center;
+  gap: 8px;
+  color: var(--bxo-muted);
+  font-size: 13px;
+}
+
+.boxcast-boxoffice.bxo .boxcast-ticket p {
+  margin: 0;
+}
+
+.boxcast-boxoffice.bxo .boxcast-ticket-button {
+  height: 36px;
+  padding: 0 16px !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: var(--bxo-surface) !important;
+  color: var(--bxo-text) !important;
+  font: 600 14px/36px var(--bxo-font) !important;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.boxcast-boxoffice.bxo .boxcast-ticket-button:hover {
+  background: var(--bxo-border) !important;
+}
+
+/* Ticket purchase is the primary action. (Donate renders its button in the second span.) */
+.boxcast-boxoffice.bxo .boxcast-ticket > span:first-child > .boxcast-ticket-button {
+  background: var(--bxo-accent) !important;
+  color: var(--bxo-on-accent) !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-ticket > span:first-child > .boxcast-ticket-button:hover {
+  filter: brightness(1.08);
+}
+
+/* Description card. The script adds `bxo-clampable` when it's taller than 150px
+   (keep in sync with COLLAPSED_HEIGHT in ui-overhaul.js) and toggles `bxo-expanded`. */
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > .boxcast-description {
+  order: 6;
+  box-sizing: border-box;
+  margin-top: 4px !important;
+  padding: 12px 14px !important;
+  border-radius: var(--bxo-radius);
+  background: var(--bxo-surface);
+  color: var(--bxo-text) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-description.bxo-empty {
+  display: none !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-description * {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-description p {
+  margin: 0 0 8px;
+}
+
+.boxcast-boxoffice.bxo .boxcast-description > :last-child {
+  margin-bottom: 0;
+}
+
+.boxcast-boxoffice.bxo .boxcast-description ul,
+.boxcast-boxoffice.bxo .boxcast-description ol {
+  margin: 0 0 8px;
+  padding-left: 22px;
+}
+
+.boxcast-boxoffice.bxo .boxcast-description ul {
+  list-style: disc;
+}
+
+.boxcast-boxoffice.bxo .boxcast-description ol {
+  list-style: decimal;
+}
+
+.boxcast-boxoffice.bxo .boxcast-description a {
+  color: var(--bxo-accent) !important;
+}
+
+.boxcast-boxoffice.bxo .bxo-clampable:not(.bxo-expanded) > .boxcast-description {
+  position: relative;
+  max-height: 150px;
+  overflow: hidden;
+}
+
+/* Fade out the clipped text behind the "Show more" button */
+.boxcast-boxoffice.bxo .bxo-clampable:not(.bxo-expanded) > .boxcast-description::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 72px;
+  background: linear-gradient(transparent, var(--bxo-surface) 65%);
+}
+
+.boxcast-boxoffice.bxo .bxo-expanded > .boxcast-description {
+  padding-bottom: 44px !important;
+}
+
+/* "Show more" / "Show less", pulled up into the bottom of the description card */
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > .bxo-more {
+  display: none;
+  position: relative;
+  order: 7;
+  flex-basis: auto !important;
+  height: 32px;
+  margin: -44px 0 0 14px !important;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--bxo-text);
+  font: 600 14px var(--bxo-font);
+  cursor: pointer;
+}
+
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well.bxo-clampable > .bxo-more {
+  display: inline-block;
+}
+
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > .bxo-more:hover {
+  text-decoration: underline;
+}
+
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well > .boxcast-linkback {
+  order: 30;
+  margin-top: 4px !important;
+  color: var(--bxo-muted) !important;
+  font-size: 12px !important;
+  text-decoration: none;
+}
+
+/* ---------- Sidebar tabs ---------- */
+
+/* Only the active panel is shown; the script marks panels with data-bxo-panel and `bxo-active` */
+.boxcast-boxoffice.bxo .bxo-col > [data-bxo-panel]:not(.bxo-active) {
+  display: none !important;
+}
+
+.boxcast-boxoffice.bxo .bxo-col > [data-bxo-panel] {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.boxcast-boxoffice.bxo .bxo-tabs {
+  display: flex;
+  flex: none;
+  order: -1;
+  gap: 6px;
+  padding: 10px;
+  border-bottom: 1px solid var(--bxo-border);
+}
+
+.boxcast-boxoffice.bxo .bxo-tab {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  border: 0;
+  border-radius: 8px;
+  background: var(--bxo-surface);
+  color: var(--bxo-text);
+  font: 600 13px var(--bxo-font) !important;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.boxcast-boxoffice.bxo .bxo-tab:hover {
+  background: var(--bxo-border);
+}
+
+.boxcast-boxoffice.bxo .bxo-tab[aria-selected='true'] {
+  background: var(--bxo-text);
+  color: var(--bxo-panel);
+}
+
+/* Live dot on the Chat tab */
+.boxcast-boxoffice.bxo .bxo-tab[data-bxo-live]::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bxo-live);
+}
+
+/* Panels sit inside the sidebar card, so drop the player's own box styling */
+.boxcast-boxoffice.bxo .bxo-col > .boxcast-well,
+.boxcast-boxoffice.bxo .bxo-col .boxcast-chat--shell {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* ---------- Playlist panel ---------- */
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] {
+  display: flex;
+  flex-direction: column;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] > .boxcast-well-title {
+  margin: 0 !important;
+  padding: 10px 10px 4px !important;
+  border: 0 !important;
+}
+
+/* The tab already says "Videos"; keep only the search box (shown when there's more than one page) */
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] > .boxcast-well-title > div:first-child,
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] > .boxcast-well-title > br,
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] > .boxcast-well-title:not(:has(.boxcast-playlist-search)) {
+  display: none !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] > .boxcast-well-title > div {
+  float: none !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-playlist-search,
+.boxcast-boxoffice.bxo .boxcast-playlist-search > input {
+  width: 100% !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-playlist-search > input {
+  box-sizing: border-box;
+  height: 36px !important;
+  padding: 0 14px !important;
+  border: 1px solid var(--bxo-border) !important;
+  border-radius: 18px !important;
+  outline: none;
+  background: var(--bxo-panel) !important;
+  color: var(--bxo-text) !important;
+  font: 14px/34px var(--bxo-font) !important;
+}
+
+.boxcast-boxoffice.bxo .boxcast-playlist-search > input:focus {
+  border-color: var(--bxo-accent) !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-list {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 4px 6px 6px;
+  overflow-y: auto;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-list ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Whole row is clickable (the script forwards clicks to the title link) */
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-item {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 10px;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 6px !important;
+  border: 0 !important;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-item:hover {
+  background: var(--bxo-hover);
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-item.boxcast-selected {
+  background: var(--bxo-surface);
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-preview-icon {
+  flex: 0 0 42%;
+  width: 42% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #000;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-preview-icon-preview {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-preview-duration {
+  right: 4px !important;
+  bottom: 4px !important;
+  padding: 1px 4px !important;
+  border-radius: 4px;
+  font: 600 11px/16px var(--bxo-font) !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-preview-timeframe {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--bxo-live);
+  color: #fff;
+  font: 700 10px/14px var(--bxo-font);
+  text-transform: uppercase;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-item-meta {
+  display: flex !important;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  width: auto !important;
+  padding: 0 !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-item-meta > h3 {
+  display: -webkit-box;
+  margin: 0 !important;
+  overflow: hidden;
+  font: 600 14px/1.35 var(--bxo-font) !important;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-item-meta > h3 a {
+  color: var(--bxo-text) !important;
+  text-decoration: none !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-selected .boxcast-playlist-item-meta > h3 a {
+  color: var(--bxo-accent) !important;
+}
+
+/* Rows show title + date only; the description is hidden */
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-item-meta > p:not(:last-of-type) {
+  display: none;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-playlist-item-meta > p {
+  margin: 0 !important;
+  color: var(--bxo-muted) !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+/* Pagination: "‹  Page 1 of 2  ›" */
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-page-controls {
+  display: flex !important;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  border-top: 1px solid var(--bxo-border);
+  background: none !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-page-controls > span {
+  color: var(--bxo-muted) !important;
+  font-size: 12px !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-page-controls > button {
+  position: relative;
+  flex: none;
+  width: 32px !important;
+  height: 32px;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50%;
+  background: var(--bxo-surface) !important;
+  font-size: 0 !important;
+  opacity: 1 !important;
+  cursor: pointer;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-page-controls > button:hover:not(:disabled) {
+  background: var(--bxo-border) !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-page-controls > button:disabled {
+  opacity: 0.4 !important;
+  cursor: default;
+}
+
+/* Chevron drawn with two borders */
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-page-controls > button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 7px;
+  height: 7px;
+  margin: auto;
+  border: solid var(--bxo-text);
+  border-width: 2px 2px 0 0;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-page-controls > button:first-child::before {
+  transform: translateX(2px) rotate(-135deg);
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='playlist'] .boxcast-page-controls > button:last-child::before {
+  transform: translateX(-2px) rotate(45deg);
+}
+
+/* ---------- Documents panel ---------- */
+
+.boxcast-boxoffice.bxo [data-bxo-panel='documents'] {
+  display: flex;
+  flex-direction: column;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='documents'] > .boxcast-well-title {
+  margin: 0 !important;
+  padding: 12px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--bxo-border) !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='documents'] > .boxcast-well-title h3 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--bxo-text) !important;
+  font: 600 14px/1.4 var(--bxo-font) !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='documents'] .boxcast-playlist-list {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Single document: the viewer fills the panel instead of a fixed square */
+.boxcast-boxoffice.bxo [data-bxo-panel='documents'] .boxcast-playlist-list > div[style*='padding-top'] {
+  height: 100%;
+  padding-top: 0 !important;
+}
+
+/* Several documents: a simple list of links */
+.boxcast-boxoffice.bxo [data-bxo-panel='documents'] .boxcast-playlist-item {
+  padding: 10px 12px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--bxo-border) !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='documents'] .boxcast-playlist-item a {
+  color: var(--bxo-text) !important;
+  font: 500 14px var(--bxo-font) !important;
+}
+
+/* ---------- Highlights panel ---------- */
+
+.boxcast-boxoffice.bxo [data-bxo-panel='highlights'] {
+  padding: 12px !important;
+  overflow-y: auto;
+}
+
+/* ---------- Chat panel ---------- */
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] {
+  display: flex;
+  flex-direction: column;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--shell {
+  display: flex !important;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+  height: auto !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--shell > .boxcast-well-title {
+  display: none !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--shell > div:not(.boxcast-well-title) {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--msgcontainer,
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--msgcontainer-messages {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto !important;
+  margin: 0 !important;
+  background: none !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100% !important;
+  color: var(--bxo-muted);
+  font-size: 14px;
+}
+
+/* Compact, Twitch-style message rows: "Name  message text" */
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--msgcontainer li {
+  padding: 4px 12px !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--msgcontainer li:hover {
+  background: var(--bxo-hover) !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--msg {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  color: var(--bxo-text);
+  font-size: 13px !important;
+  line-height: 1.45;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--name,
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--msg strong {
+  display: inline !important;
+  margin-right: 6px !important;
+  color: var(--bxo-accent);
+  font-weight: 700;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--text {
+  display: inline !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--inputcontainer {
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border-top: 1px solid var(--bxo-border);
+  background: none !important;
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--form input[type='text'] {
+  box-sizing: border-box;
+  width: 100%;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--bxo-border);
+  border-radius: 18px;
+  outline: none;
+  background: var(--bxo-surface);
+  color: var(--bxo-text);
+  font: 14px var(--bxo-font);
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--form input[type='text']:focus {
+  border-color: var(--bxo-accent);
+}
+
+.boxcast-boxoffice.bxo [data-bxo-panel='chat'] .boxcast-chat--send button {
+  height: 32px;
+  padding: 0 14px !important;
+  border: 0;
+  border-radius: 16px;
+  background: var(--bxo-accent);
+  color: var(--bxo-on-accent);
+  font: 600 13px var(--bxo-font) !important;
+  cursor: pointer;
+}

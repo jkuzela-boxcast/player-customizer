@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-
-const props = defineProps<{
+defineProps<{
   modelValue: number
   min: number
   max: number
@@ -12,49 +10,26 @@ const emit = defineEmits<{
   'update:modelValue': [value: number]
 }>()
 
-const displayValue = ref(String(props.modelValue))
-
-// Watch for changes from parent (e.g., aspect ratio lock syncing)
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    displayValue.value = String(newValue)
-  }
-)
-
-const handleInput = (e: Event) => {
-  const target = e.target as HTMLInputElement
-  displayValue.value = target.value
-  emit('update:modelValue', parseFloat(target.value))
-}
-
-const handleInputChange = (e: Event) => {
-  const target = e.target as HTMLInputElement
-  const value = parseFloat(target.value) || 0
-  displayValue.value = String(value)
-  emit('update:modelValue', value)
-}
+const onInput = (e: Event) => emit('update:modelValue', parseFloat((e.target as HTMLInputElement).value) || 0)
 </script>
 
 <template>
-  <div class="flex gap-2">
+  <div class="flex items-center gap-3">
     <input
       type="range"
       :value="modelValue"
       :min="min"
       :max="max"
       :step="step"
-      class="flex-1 cursor-pointer"
-      @input="handleInput" />
+      class="range range-primary range-xs flex-1"
+      @input="onInput" />
     <input
-      :value="displayValue"
       type="number"
+      :value="modelValue"
       :min="min"
       :max="max"
       :step="step"
-      class="w-16 rounded-md border border-slate-600 bg-slate-900 px-2 py-1 text-xs text-slate-300"
-      @change="handleInputChange" />
+      class="input input-sm w-18 font-mono text-xs"
+      @change="onInput" />
   </div>
 </template>
-
-<style scoped></style>
