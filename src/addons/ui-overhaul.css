@@ -348,8 +348,10 @@
   background: linear-gradient(transparent, var(--bxo-surface) 65%);
 }
 
-.boxcast-boxoffice.bxo .bxo-expanded > .boxcast-description {
-  padding-bottom: 44px !important;
+/* Room for the "Show less" button (pulled up 44px) plus a small gap above it.
+   Selector must match the base description rule's specificity to override its padding. */
+.boxcast-boxoffice.bxo .boxcast-with-playlist-to-right-col-1 > .boxcast-well.bxo-expanded > .boxcast-description {
+  padding-bottom: 52px !important;
 }
 
 /* "Show more" / "Show less", pulled up into the bottom of the description card */
